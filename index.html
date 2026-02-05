@@ -34,14 +34,7 @@
             access, fit support, and launch-day perks.
           </p>
 
-          <form
-            class="waitlist"
-            name="waitlist"
-            method="POST"
-            action="https://formsubmit.co/hannah@babysbreathbw.com"
-          >
-            <input type="hidden" name="_subject" value="Babys Breath waitlist signup" />
-            <input type="hidden" name="_captcha" value="false" />
+          <form class="waitlist" id="waitlist-form" novalidate>
             <label class="sr-only" for="email">Email address</label>
             <input
               id="email"
@@ -53,6 +46,7 @@
             />
             <button type="submit">Join the waitlist</button>
           </form>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
           <p class="fine">
             We will never spam you. Expect 1–2 emails per month while we build.
           </p>
@@ -86,5 +80,51 @@
         <span>library.babysbreathbw.com</span>
       </footer>
     </div>
+
+    <script>
+      const form = document.getElementById("waitlist-form");
+      const status = document.getElementById("form-status");
+      const button = form.querySelector("button");
+      const emailInput = form.querySelector("input[name=\"email\"]");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        status.textContent = "";
+        status.className = "form-status";
+        button.disabled = true;
+        button.textContent = "Joining...";
+
+        try {
+          const email = emailInput.value.trim();
+          if (!email) {
+            throw new Error("Please add a valid email address.");
+          }
+
+          const response = await fetch("/api/waitlist", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email }),
+          });
+
+          const payload = await response.json().catch(() => ({}));
+          if (!response.ok) {
+            throw new Error(payload.error || "Something went wrong. Please try again.");
+          }
+
+          form.reset();
+          status.textContent = "You're on the list! We'll be in touch soon.";
+          status.classList.add("success");
+        } catch (error) {
+          status.textContent =
+            error && error.message ? error.message : "Something went wrong. Please try again.";
+          status.classList.add("error");
+        } finally {
+          button.disabled = false;
+          button.textContent = "Join the waitlist";
+        }
+      });
+    </script>
   </body>
 </html>

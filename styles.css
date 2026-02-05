@@ -144,6 +144,28 @@ h1 {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.waitlist button:disabled {
+  cursor: progress;
+  opacity: 0.8;
+  box-shadow: none;
+  transform: none;
+}
+
+.form-status {
+  min-height: 1.4rem;
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--soft-ink);
+}
+
+.form-status.success {
+  color: #2d5743;
+}
+
+.form-status.error {
+  color: #8c2f2f;
+}
+
 .waitlist button:hover {
   transform: translateY(-2px);
   box-shadow: 0 16px 30px rgba(238, 143, 106, 0.35);
