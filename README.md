@@ -1,6 +1,6 @@
-# Babys Breath Babywearing Library — Waitlist
+# Baby's Breath Babywearing Library — Waitlist
 
-Static one-page waitlist site for a babywearing carrier library in the Willamette Valley, OR.
+Static one-page waitlist site for a babywearing carrier library in Salem, OR.
 
 ## One-click deploy (Vercel)
 
@@ -25,12 +25,13 @@ create table if not exists public.waitlist (
 alter table public.waitlist enable row level security;
 ```
 
-Connect Supabase to your Vercel project (Marketplace integration) so these env vars are added:
+Add these env vars to your Vercel project:
 
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_URL` (your Project URL)
+- `SUPABASE_SECRET_KEY` (your Secret API key, `sb_secret_...`)
 
-The waitlist form posts to `/api/waitlist`, which writes to Supabase using the service role key.
+The waitlist form posts to `/api/waitlist`, which writes to Supabase using the secret API key.
+Legacy `SUPABASE_SERVICE_ROLE_KEY` is still supported as a fallback, but Supabase recommends using secret keys.
 
 ## Email form
 

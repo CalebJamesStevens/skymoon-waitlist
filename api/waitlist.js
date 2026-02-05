@@ -6,9 +6,11 @@ export async function POST(request) {
   }
 
   const supabaseUrl = process.env.SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const secretKey = process.env.SUPABASE_SECRET_KEY;
+  const legacyServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const apiKey = secretKey || legacyServiceKey;
 
-  if (!supabaseUrl || !serviceRoleKey) {
+  if (!supabaseUrl || !apiKey) {
     return Response.json({ error: "Server is not configured yet." }, { status: 500 });
   }
 
@@ -18,14 +20,19 @@ export async function POST(request) {
     email: email.trim().toLowerCase(),
   };
 
+  const headers = {
+    "Content-Type": "application/json",
+    apikey: apiKey,
+    Prefer: "return=minimal",
+  };
+
+  if (!apiKey.startsWith("sb_")) {
+    headers.Authorization = `Bearer ${apiKey}`;
+  }
+
   const supabaseResponse = await fetch(`${baseUrl}/rest/v1/waitlist`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      apikey: serviceRoleKey,
-      Authorization: `Bearer ${serviceRoleKey}`,
-      Prefer: "return=minimal",
-    },
+    headers,
     body: JSON.stringify(payload),
   });
 
